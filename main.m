@@ -1,3 +1,1 @@
-data = load('PerfectArial.mat')
-
-disp(data)
+mpaper()
