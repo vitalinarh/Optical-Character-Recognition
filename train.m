@@ -18,10 +18,13 @@ function network = trainNetwork()
     load('PerfectArial.mat');  
     
     % Generate target matrix
-    target_out = zeros(10, columns);
-    for i = 0 : columns - 1
-        target_out(mod(i, 10) + 1, i + 1) = 1; 
+    target_out = eye(10, 10)
+    I = eye(10, 10)
+    for i = 0 : columns / 10 - 2
+        target_out = horzcat(target_out, I) 
     end
+    
+    target_out(1:10,2)
     
     target_assoc_mem = repmat(Perfect,1, columns / 10); % For associative memory 
 
