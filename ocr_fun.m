@@ -1,5 +1,4 @@
 function ocr_fun(data)
-
 %::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: 
 % OCR_FUN Calls OCR classifier and displays result.
 % 2020
@@ -11,7 +10,7 @@ function ocr_fun(data)
 %  of the matrix data.X. The output is displayed in a grid 5 x 10.
 %
 % Input:
-%  data.X [dim x (5*10)] Input images store as column vectors.
+%  data.X [dim x (5*10)] Input images stored as column vectors.
 %    The images are assumed to be taken from grid 5x10.
 %
 

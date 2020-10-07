@@ -208,10 +208,10 @@ function Dn(varargin)
  % Do not use this file for classification.For tham comment the following
  % line feval:
  %
-            %  feval(options.fun,data);
+ feval(options.fun,data);
              
  % feval calculates the function options.fun, that by default is ocr_fun that 
- %calls the function myclassify that must be written by the user.
+ % calls the function myclassify that must be written by the user.
  %
  % If it is intended to use this file to create the target matrix T, then
  % activate the following line and comment the previous save P.
