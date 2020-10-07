@@ -24,8 +24,6 @@ function network = trainNetwork()
         target_out = horzcat(target_out, I) 
     end
     
-    target_out(1:10,2)
-    
     target_assoc_mem = repmat(Perfect,1, columns / 10); % For associative memory 
 
     % Filter as Associative memory
