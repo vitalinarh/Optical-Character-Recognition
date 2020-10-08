@@ -4,9 +4,9 @@ function network = trainNetwork()
     train_set = menu('Training set: ','500','1000');
     
     if train_set == 1
-        columns = 500
+        columns = 500;
     else
-        columns = 1000
+        columns = 1000;
     end
     
     % Concatenate all training matrices to form matrix P
@@ -24,10 +24,10 @@ function network = trainNetwork()
     load('PerfectArial.mat');  
     
     % Generate target matrix
-    target_out = eye(10, 10)
-    I = eye(10, 10)
+    target_out = eye(10, 10);
+    I = eye(10, 10);
     for i = 0 : columns / 10 - 2
-        target_out = horzcat(target_out, I) 
+        target_out = horzcat(target_out, I);
     end
     
     target_assoc_mem = repmat(Perfect, 1, columns / 10); % For associative memory 
