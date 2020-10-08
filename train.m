@@ -49,7 +49,7 @@ function network = trainNetwork()
     % Associative Memory + Classifier
     % hardlim activation function
     
-    net.layers{1}.transferFcn = 'hardlim'
+    net.layers{1}.transferFcn = 'hardlim';
     
     net.performParam.lr = 0.01;     % learning rate| default value is 0.01
     net.trainParam.epochs = 1000;   % The default is 1000 
@@ -61,8 +61,14 @@ function network = trainNetwork()
     net = train(net, P2, target_out);
     sim(net, P);
     
-    hardlim_AM_Filter = net;
-    save hardlim_AM_Filter;
+    % save network on file
+    if columns == 500
+        hardlim_AM_Filter_500 = net;
+        save hardlim_AM_Filter_500;
+    else
+        hardlim_AM_Filter_1000 = net;
+        save hardlim_AM_Filter_1000;
+    end
     
     return
     
