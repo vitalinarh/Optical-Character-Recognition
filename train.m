@@ -1,10 +1,16 @@
 function network = trainNetwork()
+
+    % Choose the amount of test cases for the training dataset
+    train_set = menu('Training set: ','500','1000');
     
-    % set up aux variables
-    columns = 600;
+    if train_set == 1
+        columns = 500
+    else
+        columns = 1000
+    end
     
     % Concatenate all training matrices to form matrix P
-    for i = 1:12
+    for i = 1 : columns / 50
         filename = "P" + int2str(i) + ".mat";
         if i == 1
             P = load(filename).P;
@@ -24,7 +30,7 @@ function network = trainNetwork()
         target_out = horzcat(target_out, I) 
     end
     
-    target_assoc_mem = repmat(Perfect,1, columns / 10); % For associative memory 
+    target_assoc_mem = repmat(Perfect, 1, columns / 10); % For associative memory 
 
     % Filter as Associative memory
     Wp = target_assoc_mem * pinv(P);
