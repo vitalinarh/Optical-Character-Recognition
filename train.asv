@@ -86,7 +86,7 @@ function nnetwork = trainNetwork()
         % linear activation function
         elseif activation_function == 2
             
-            net = network;             
+            net = network;              % create feed forward network
             
             net.numInputs = 1;
             net.numLayers = 1;
@@ -102,20 +102,19 @@ function nnetwork = trainNetwork()
             net.layers{1}.initFcn = 'initnw';
             
             net.trainFcn = 'trainc';
-            net.biases{1}.learnFcn = 'learngd';
-            net.inputWeights{1}.learnFcn = 'learngd'; 
+            net.trainFcn = 
             
-            W = rand(10, 256);              % 256 inputs, 10 neurons
+            W = rand(10, 256);                  % 256 inputs, 10 neurons
             b = rand(10, 1);    
 
             net.IW{1, 1} = W;
             net.b{1, 1} = b;
             
             net.performParam.lr = 0.01;     % learning rate| default value is 0.01
-            net.trainParam.epochs = 50;     % The default is 1000 
+            % net.trainParam.epochs = 50;     % The default is 1000 
                                             % The number of epochs define the number of times that the learning algorithm will work trhough the entire training dataset. One epoch means that each sample in the training dataset has had an opportunity to update the internal model parameters
-            net.trainParam.show = 25;       % The default is 25 %show| Epochs between displays
-            net.trainParam.goal = 1e-6;     % The default is 0 %goal=objective Performance goal
+            % net.trainParam.show = 25;       % The default is 25 %show| Epochs between displays
+            % net.trainParam.goal = 1e-6;     % The default is 0 %goal=objective Performance goal
             net.performFcn = 'sse';         % criterion | (Sum Squared error)
             
             net = init(net);
