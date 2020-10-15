@@ -101,9 +101,10 @@ function nnetwork = trainNetwork()
             net.layers{1}.transferFcn = 'purelin';
             net.layers{1}.initFcn = 'initnw';
             
-            net.trainFcn = 'trainc';
-            net.biases{1}.learnFcn = 'learngd';
-            net.inputWeights{1}.learnFcn = 'learngd'; 
+            net.trainFcn = 'trainb';
+            net.trainFcn = 'traingd';
+            %net.biases{1}.trainFcn = 'traingd';
+            %net.inputWeights{1}.trainFcn = 'traingd'; 
             
             W = rand(10, 256);              % 256 inputs, 10 neurons
             b = rand(10, 1);    
@@ -177,6 +178,54 @@ function nnetwork = trainNetwork()
         % Two Layer Classifier
         elseif classifier == 2
             net = network;
+            
+            net.trainFcn = 'trainc'; % bach is the default
+            
+            net.numInputs = 1;
+            net.numLayers = 2;
+            net.biasConnect = [1; 1];
+            net.inputConnect(1, 1) = 1;
+            net.layerConnect = [0 0; 1 0];
+            net.outputConnect = [0 1];
+            
+            % hidden layer
+            net.inputs{1}.size = 256;
+            net.layers{1}.size = 100;
+            net.layers{1}.transferFcn = 'purelin';
+            net.layers{1}.initFcn = 'initnw';
+            net.layers{1}.name = 'Hidden';
+            
+            % output layer
+            net.layers{2}.size = 10;
+            net.layers{2}.transferFcn = 'tansig';
+            net.layers{2}.initFcn = 'initnw';
+            
+            % Fix number of neurons, more than 10 in principle
+            x = 100;
+            
+            W = rand(x, 256);              % 256 inputs, x neurons
+            b = rand(x, 1);    
+            
+            net.IW{1, 1} = W;
+            net.b{1, 1} = b;
+            
+            W = rand(10, x);              % x inputs, 10 neurons
+            b = rand(10, 1);    
+
+            net.LW{2, 1} = W;
+            net.b{2, 1} = b;
+            
+            net.performParam.lr = 0.01;     % learning rate| default value is 0.01
+            net.trainParam.epochs = 50;     % The default is 1000 
+                                            % The number of epochs define the number of times that the learning algorithm will work trhough the entire training dataset. One epoch means that each sample in the training dataset has had an opportunity to update the internal model parameters
+            net.trainParam.show = 25;       % The default is 25 %show| Epochs between displays
+            net.trainParam.goal = 1e-6;     % The default is 0 %goal=objective Performance goal
+            net.performFcn = 'sse';         % criterion | (Sum Squared error)
+            
+            net = init(net);
+            
+            net = train(net, P, target_out); 
+               
         % Patternet
         else
             
