@@ -55,6 +55,11 @@ function nnetwork = trainNetwork()
 
             net.layers{1}.transferFcn = 'hardlim';
             
+            net.divideFcn = 'divideblock';
+            net.divideParam.valRatio = 15/100;  %validation 
+            net.divideParam.trainRatio = 70/100; %training
+            net.divideParam.testRatio = 15/100; %testing
+            
             net = init(net);
             
             W = rand(10, 256);  % 256 inputs, 10 neurons
@@ -68,7 +73,7 @@ function nnetwork = trainNetwork()
                                             % The number of epochs define the number of times that the learning algorithm will work trhough the entire training dataset. One epoch means that each sample in the training dataset has had an opportunity to update the internal model parameters
             net.trainParam.show = 25;       % The default is 25 %show| Epochs between displays
             net.trainParam.goal = 1e-6;     % The default is 0 %goal=objective Performance goal
-            net.performFcn = 'sse';         % criterion | (Sum Squared error)
+            net.performFcn = 'mse';         % criterion | (Sum Squared error)
 
             net = train(net, P2, target_out); 
 
@@ -95,14 +100,16 @@ function nnetwork = trainNetwork()
             net.layers{1}.size = 10;
             
             net.biasConnect(1) = 1;
-            net.inputConnect(1,1) = 1;
+            net.inputConnect(1, 1) = 1;
             net.outputConnect = 1;
             
-            net.layers{1}.transferFcn = 'purelin';
-            net.layers{1}.initFcn = 'initnw';
+            net.layers{1}.transferfcn = 'purelin'; 
+            net.inputWeights{1}.learnFcn = 'learngd';  
+            net.biases{1}.learnFcn = 'learngd';
+            net.trainFcn = 'traingd'; 
             
-            net.trainFcn = 'trainb';
-            net.trainFcn = 'traingd';
+            net.divideFcn = 'divideblock';
+            
             %net.biases{1}.trainFcn = 'traingd';
             %net.inputWeights{1}.trainFcn = 'traingd'; 
             
@@ -113,18 +120,77 @@ function nnetwork = trainNetwork()
             net.b{1, 1} = b;
             
             net.performParam.lr = 0.01;     % learning rate| default value is 0.01
-            net.trainParam.epochs = 50;     % The default is 1000 
+            net.trainParam.epochs = 1000;     % The default is 1000 
                                             % The number of epochs define the number of times that the learning algorithm will work trhough the entire training dataset. One epoch means that each sample in the training dataset has had an opportunity to update the internal model parameters
             net.trainParam.show = 25;       % The default is 25 %show| Epochs between displays
             net.trainParam.goal = 1e-6;     % The default is 0 %goal=objective Performance goal
-            net.performFcn = 'sse';         % criterion | (Sum Squared error)
+            net.performFcn = 'mse';         %criterion | (Mean Squared error) 
             
-            net = init(net);
-
-            net = train(net, P2, target_out); 
+            [net,tr] = train(net, P2, target_out); 
+            
+            plotperform(tr)
+            
+            if columns == 500
+                linear_AM_Filter_500 = net;
+                save linear_AM_Filter_500;
+            else
+                linear_AM_Filter_1000 = net;
+                save linear_AM_Filter_1000;
+            end
             
         % sigmoidal activation function
         else
+            net = network; 
+            
+            net.numInputs = 1;
+            net.numLayers = 1;
+            net.inputs{1}.size = 256;
+            net.layers{1}.size = 10;
+            
+            net.biasConnect(1) = 1;
+            net.inputConnect(1,1) = 1;
+            net.outputConnect = 1;
+            
+            net.layers{1}.transferFcn = 'logsig'; %activation function sigmoidal
+            net.layers{1}.initFcn = 'initnw';
+            
+%             net.trainFcn = 'traingda';
+            net.trainFcn = 'trainb';
+            net.trainFcn = 'traingda';
+            
+            %net.biases{1}.trainFcn = 'traingd';
+            %net.inputWeights{1}.trainFcn = 'traingd'; 
+            
+            W = rand(10, 256);              % 256 inputs, 10 neurons
+            b = rand(10, 1);    
+            net.IW{1, 1} = W;
+            net.b{1, 1} = b;
+            
+            net.performParam.lr = 0.01;     % learning rate| default value is 0.01
+            net.trainParam.epochs = 1000;     % The default is 1000 
+                                            % The number of epochs define the number of times that the learning algorithm will work trhough the entire training dataset. One epoch means that each sample in the training dataset has had an opportunity to update the internal model parameters
+            net.trainParam.show = 25;       % The default is 25 %show| Epochs between displays
+            net.trainParam.goal = 1e-6;     % The default is 0 %goal=objective Performance goal
+            net.performFcn = 'mse';         % criterion | (Sum Squared error)
+            
+            %divide the block of data for train, validation and test
+            net.divideFcn = "divideblock";
+            net.divideParam.trainRatio = 70/100;  %train data
+            net.divideParam.valRatio = 15/100;    %validation data
+            net.divideParam.testRatio = 15/100;   %test data
+            
+            net = init(net);
+            
+            [net,tr] = train(net, P2, target_out);  
+            plotperform(tr);
+            
+            if columns == 500
+                sigmoid_AM_Filter_500 = net;
+                save sigmoid_AM_Filter_500;
+            else
+                sigmoid_AM_Filter_1000 = net;
+                save sigmoid_AM_Filter_1000;
+            end
         end
     % Only Classifier
     else 
@@ -172,9 +238,110 @@ function nnetwork = trainNetwork()
                 end
             % linear activation function
             elseif activation_function == 2
+                net = network;             
+
+                net.numInputs = 1;
+                net.numLayers = 1;
+
+                net.inputs{1}.size = 256;
+                net.layers{1}.size = 10;
+
+                net.biasConnect(1) = 1;
+                net.inputConnect(1, 1) = 1;
+                net.outputConnect = 1;
+
+                net.layers{1}.transferfcn = 'purelin'; 
+                net.inputWeights{1}.learnFcn = 'learngd';  
+                net.biases{1}.learnFcn = 'learngd';
+                net.trainFcn = 'traingd'; 
+
+                net.divideFcn = 'divideblock';
+
+                %net.biases{1}.trainFcn = 'traingd';
+                %net.inputWeights{1}.trainFcn = 'traingd'; 
+
+                W = rand(10, 256);              % 256 inputs, 10 neurons
+                b = rand(10, 1);    
+
+                net.IW{1, 1} = W;
+                net.b{1, 1} = b;
+            
+                net.performParam.lr = 0.01;     % learning rate| default value is 0.01
+                net.trainParam.epochs = 1000;     % The default is 1000 
+                                                % The number of epochs define the number of times that the learning algorithm will work trhough the entire training dataset. One epoch means that each sample in the training dataset has had an opportunity to update the internal model parameters
+                net.trainParam.show = 25;       % The default is 25 %show| Epochs between displays
+                net.trainParam.goal = 1e-6;     % The default is 0 %goal=objective Performance goal
+                net.performFcn = 'mse';         %criterion | (Mean Squared error) 
+
+                [net,tr] = train(net, P, target_out); 
+
+                plotperform(tr)
+                
+                % save network on file
+                if columns == 500
+                    hardlim_Classifier_500 = net;
+                    save linear_Classifier_500;
+                else
+                    hardlim_Classifier_1000 = net;
+                    save linear_Classifier_1000;
+                end
+                    
             % sigmoidal activation function
             else
+                net = network; 
+            
+                net.numInputs = 1;
+                net.numLayers = 1;
+                net.inputs{1}.size = 256;
+                net.layers{1}.size = 10;
+            
+                net.biasConnect(1) = 1;
+                net.inputConnect(1,1) = 1;
+                net.outputConnect = 1;
+            
+                net.layers{1}.transferFcn = 'logsig'; %activation function sigmoidal
+                net.layers{1}.initFcn = 'initnw';
+
+    %             net.trainFcn = 'traingda';
+                net.trainFcn = 'trainb';
+                net.trainFcn = 'traingda';
+
+                %net.biases{1}.trainFcn = 'traingd';
+                %net.inputWeights{1}.trainFcn = 'traingd'; 
+
+                W = rand(10, 256);              % 256 inputs, 10 neurons
+                b = rand(10, 1);    
+                net.IW{1, 1} = W;
+                net.b{1, 1} = b;
+
+                net.performParam.lr = 0.01;     % learning rate| default value is 0.01
+                net.trainParam.epochs = 1000;     % The default is 1000 
+                                                % The number of epochs define the number of times that the learning algorithm will work trhough the entire training dataset. One epoch means that each sample in the training dataset has had an opportunity to update the internal model parameters
+                net.trainParam.show = 25;       % The default is 25 %show| Epochs between displays
+                net.trainParam.goal = 1e-6;     % The default is 0 %goal=objective Performance goal
+                net.performFcn = 'mse';         % criterion | (Sum Squared error)
+
+                %divide the block of data for train, validation and test
+                net.divideFcn = "divideblock";
+                net.divideParam.trainRatio = 70/100;  %train data
+                net.divideParam.valRatio = 15/100;    %validation data
+                net.divideParam.testRatio = 15/100;   %test data
+
+                net = init(net);
+            
+                [net,tr] = train(net, P, target_out);  
+                plotperform(tr);
+                
+                % save network on file
+                if columns == 500
+                    sigmoid_Classifier_500 = net;
+                    save sigmoid_Classifier_500;
+                else
+                    sigmoid_Classifier_1000 = net;
+                    save sigmoid_Classifier_500;
+                end
             end
+                
         % Two Layer Classifier
         elseif classifier == 2
             net = network;
@@ -224,11 +391,49 @@ function nnetwork = trainNetwork()
             
             net = init(net);
             
-            net = train(net, P, target_out); 
+            [net,tr] = train(net, P, target_out); 
+            
+            plotperform(tr)
+            
+            if columns == 500
+                two_layer_500 = net;
+                save two_layer_500;
+            else
+                two_layer_1000 = net;
+                save two_layer_1000;
+            end
                
         % Patternet
         else
+            net = patternnet(10);
             
+            net.trainFcn = 'traingdx';
+            
+            net.performParam.lr = 0.01;     % learning rate| default value is 0.01
+            net.trainParam.epochs = 1000;     % The default is 1000 
+                                            % The number of epochs define the number of times that the learning algorithm will work trhough the entire training dataset. One epoch means that each sample in the training dataset has had an opportunity to update the internal model parameters
+            net.trainParam.show = 25;       % The default is 25 %show| Epochs between displays
+            net.trainParam.goal = 1e-6;     % The default is 0 %goal=objective Performance goal
+            net.performFcn = 'mse';         % 
+            
+            %divide the block of data for train, validation and test
+            net.divideFcn = "divideblock";
+            net.divideParam.trainRatio = 70/100;  %train data
+            net.divideParam.valRatio = 15/100;    %validation data
+            net.divideParam.testRatio = 15/100;   %test data
+            
+            net = init(net);
+            
+            [net, tr] = train(net, P, target_out);
+            
+            % save network on file
+            if columns == 500
+                patternet_500 = net;
+                save patternet_500;
+            else
+                patternet_1000 = net;
+                save patternet_1000;
+            end
         end
     end
     

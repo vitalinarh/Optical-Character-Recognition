@@ -1,6 +1,6 @@
 function network = myclassify(data, filled)
     % Extract net
-    load('hardlim_Classifier_500.mat');
+    load('patternet_1000.mat');
     % extract result from developed network with given data
     y = sim(net, data);
     % compute the largest elements in each column, as well as the row
