@@ -48,8 +48,17 @@ function nnetwork = trainNetwork()
         % hardlim activation function
         if activation_function == 1
             
-            net = perceptron;
-            net = configure(net, P2, target_out);
+            net = feedforwardnet;             
+            
+            net.numInputs = 1;
+            net.numLayers = 1;
+            
+            net.inputs{1}.size = 256;
+            net.layers{1}.size = 10;
+            
+            net.biasConnect(1) = 1;
+            net.inputConnect(1, 1) = 1;
+            net.outputConnect = 1;
             
             % incremental method
             net.trainFcn = 'trainc';
@@ -69,17 +78,16 @@ function nnetwork = trainNetwork()
             net.IW{1, 1} = W;
             net.b{1, 1} = b;
 
-            net.performParam.lr = 0.0001;     % learning rate| default value is 0.01
+            net.performParam.lr = 0.01;     % learning rate| default value is 0.01
             net.trainParam.epochs = 1000;   % The default is 1000 
                                             % The number of epochs define the number of times that the learning algorithm will work trhough the entire training dataset. One epoch means that each sample in the training dataset has had an opportunity to update the internal model parameters
             net.trainParam.show = 25;       % The default is 25 %show| Epochs between displays
             net.trainParam.goal = 1e-6;     % The default is 0 %goal=objective Performance goal
             net.performFcn = 'mse';         % criterion | (Sum Squared error)
 
-            net = train(net, P2, target_out); 
-
-            % Pt = load('P1.mat');
-            % a = sim(net, Pt.P);
+            [net, tr] = train(net, P2, target_out); 
+            
+            plotperform(tr)
 
             % save network on file
             if columns == 500
@@ -286,7 +294,7 @@ function nnetwork = trainNetwork()
 
                 [net,tr] = train(net, P, target_out); 
 
-                plotperform(tr)
+                % plotperform(tr)
                 
                 % save network on file
                 if columns == 500
@@ -313,7 +321,6 @@ function nnetwork = trainNetwork()
                 net.layers{1}.transferFcn = 'logsig'; %activation function sigmoidal
                 net.layers{1}.initFcn = 'initnw';
 
-    %             net.trainFcn = 'traingda';
                 net.trainFcn = 'trainb';
                 net.trainFcn = 'traingda';
 
@@ -338,11 +345,7 @@ function nnetwork = trainNetwork()
                 net = init(net);
             
                 [net,tr] = train(net, P, target_out);  
-                plotperform(tr);
-                
-                Pt = load('P1.mat');
-                a = sim(net, Pt.P)
-                a
+                % plotperform(tr);
                 
                 % save network on file
                 if columns == 500
@@ -350,7 +353,7 @@ function nnetwork = trainNetwork()
                     save sigmoid_Classifier_500;
                 else
                     sigmoid_Classifier_1000 = net;
-                    save sigmoid_Classifier_500;
+                    save sigmoid_Classifier_1000;
                 end
             end
                 
@@ -358,7 +361,7 @@ function nnetwork = trainNetwork()
         elseif classifier == 2
             net = network;
             
-            net.trainFcn = 'trainlm';
+            net.trainFcn = 'traingdx';
            
             net.numInputs = 1;
             net.numLayers = 2;
