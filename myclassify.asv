@@ -32,9 +32,9 @@ function network = myclassify(data, filled)
                 load("sigmoid_Classifier_" + int2str(n) + ".mat");
             end
         elseif classifier == 2
-            load("two_layer_" + int2str(n) + ".mat");
+            load("two_layer_' + int2str(n) + '.mat');
         else
-            load("patternet_" + int2str(n) + ".mat");
+            load("patternet_' + int2str(n) + '.mat');
         end
     end 
    
